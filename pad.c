@@ -24,6 +24,7 @@ int pad_init(void)
 		return 1;
 	rows = fb_rows() / fnrows;
 	cols = fb_cols() / fncols;
+        printf("%dx%d pixels, so %dx%d characters\n", fb_cols(), fb_rows(), cols, rows );
 	return 0;
 }
 
@@ -178,9 +179,9 @@ void pad_fill(int sr, int er, int sc, int ec, int c)
 
         if (invalid_nonempty) {
           if (sc < invalid_left) invalid_left = sc;
-          if (ec >= invalid_right) invalid_right = ec + 1;
+          if (ec > invalid_right) invalid_right = ec;
           if (sr < invalid_top) invalid_top = sr;
-          if (er >= invalid_bottom) invalid_bottom = er + 1;
+          if (er > invalid_bottom) invalid_bottom = er;
         } else {
           invalid_nonempty = 1;
           invalid_left = sc;
