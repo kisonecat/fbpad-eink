@@ -1,6 +1,6 @@
 CC = arm-linux-gnueabihf-cc
 CFLAGS = -Wall -O2
-LDFLAGS =
+LDFLAGS = -lutil # for openpty
 
 all: fbpad
 

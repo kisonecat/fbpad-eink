@@ -12,6 +12,8 @@
 #include "conf.h"
 #include "fbpad.h"
 
+#include <pty.h>
+
 #define MODE_CURSOR		0x01
 #define MODE_WRAP		0x02
 #define MODE_ORIGIN		0x04
@@ -274,6 +276,8 @@ static void term_reset(void)
 
 static int _openpty(int *master, int *slave)
 {
+  return openpty(master, slave, NULL, NULL, NULL );
+  /*
 	int unlock = 0;
 	int ptyno = 0;
 	char name[20];
@@ -285,7 +289,7 @@ static int _openpty(int *master, int *slave)
 		return -1;
 	sprintf(name, "/dev/pts/%d", ptyno);
 	*slave = open(name, O_RDWR | O_NOCTTY);
-	return 0;
+	return 0;*/
 }
 
 static void _login(int fd)

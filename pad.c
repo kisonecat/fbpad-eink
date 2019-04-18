@@ -13,8 +13,10 @@ static int rows, cols;
 static int fnrows, fncols;
 static struct font *fonts[3];
 
-// BADBAD
-static int min_r = 1000, max_r = -1000, min_c = 1000, max_c = -1000;
+static int invalid_nonempty = 0;
+// invalid region is measured in character cells and does NOT include
+// the right or bottom edge
+static int invalid_top = 0, invalid_left = 0, invalid_right = 0, invalid_bottom = 0;
 
 int pad_init(void)
 {
@@ -141,10 +143,18 @@ static int fnsel(int fg, int bg)
 
 void pad_put(int ch, int r, int c, int fg, int bg)
 {
-        if (r < min_r) min_r = r;
-        if (r > max_r) max_r = r;
-        if (c < min_c) min_c = c;
-        if (c > max_c) max_c = c;
+	if (invalid_nonempty) {
+          if (c < invalid_left) invalid_left = c;
+          if (c >= invalid_right) invalid_right = c + 1;
+          if (r < invalid_top) invalid_top = r;
+          if (r >= invalid_bottom) invalid_bottom = r + 1;
+        } else {
+          invalid_nonempty = 1;
+          invalid_left = c;
+          invalid_right = c+1;
+          invalid_top = r;
+          invalid_bottom = r+1;
+        }
 
 	int sr = fnrows * r;
 	int sc = fncols * c;
@@ -162,31 +172,36 @@ void pad_put(int ch, int r, int c, int fg, int bg)
 
 void pad_fill(int sr, int er, int sc, int ec, int c)
 {
-
 	int fber = er >= 0 ? er * fnrows : fb_rows();
 	int fbec = ec >= 0 ? ec * fncols : fb_cols();
 	fb_box(sr * fnrows, fber, sc * fncols, fbec, color2fb(c & FN_C));
 
-  if (sr < min_r) min_r = sr;
-  if (er > max_r) max_r = er;
-  if (sc < min_c) min_c = sc;
-  if (ec > max_c) max_c = ec;         
+        if (invalid_nonempty) {
+          if (sc < invalid_left) invalid_left = sc;
+          if (ec >= invalid_right) invalid_right = ec + 1;
+          if (sr < invalid_top) invalid_top = sr;
+          if (er >= invalid_bottom) invalid_bottom = er + 1;
+        } else {
+          invalid_nonempty = 1;
+          invalid_left = sc;
+          invalid_right = ec + 1;
+          invalid_top = sr;
+          invalid_bottom = er + 1;
+        }
 }
 
 int pad_refresh(void) {
   printf( "refresh: (%d,%d) to (%d,%d)\n", min_r, min_c, max_r, max_c );
 
   fbink_refresh( fb_fd(),
-                 min_r * fnrows,
-                 min_c * fncols,
-                 (max_c - min_c + 1) * fncols,
-                 (max_r - min_r + 1) * fnrows,
+                 invalid_top * fnrows,
+                 invalid_left * fncols,
+                 (invalid_right - invalid_left) * fncols,
+                 (invalid_bottom - invalid_top) * fnrows,
                  0 );
 
-  min_r = 1000;
-  max_r = -1000;
-  min_c = 1000;
-  max_c = -1000;
+  invalid_nonempty = 0;
+  invalid_top = invalid_bottom = invalid_left = invalid_right = 0;
 }
 
 int pad_rows(void)
