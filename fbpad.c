@@ -265,6 +265,7 @@ static int pollterms(void)
 		peepterm(term_idx[i]);
 		if (ufds[i].revents & POLLIN) {
 			term_read();
+                        pad_refresh(); // BADBAD
 		} else {
 			scr_free(term_idx[i]);
 			term_end();
@@ -341,7 +342,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	if (sizeof(fbval_t) != FBM_BPP(fb_mode())) {
-		fprintf(stderr, "fbpad: fbval_t does not match framebuffer depth\n");
+          fprintf(stderr, "fbpad: fbval_t does not match framebuffer depth (%d bytes)\n", FBM_BPP(fb_mode()) );
 		return 1;
 	}
 	if (pad_init()) {

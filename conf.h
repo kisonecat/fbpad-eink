@@ -14,12 +14,12 @@
 #define TERM        "linux"
 
 /* fbval_t should match framebuffer depth */
-typedef unsigned int fbval_t;
+typedef unsigned short fbval_t;
 
 /* tinyfont files for regular, italic, and bold fonts */
-#define FR		"/path/to/font.tf"
+#define FR		"terminus.tf"
 #define FI		NULL
-#define FB		NULL
+#define FB		"terminus-bold.tf"
 
 /* foreground and background colors */
 #define FGCOLOR		COLOR0

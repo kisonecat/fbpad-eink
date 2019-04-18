@@ -91,9 +91,10 @@ int fb_init(char *dev)
 	if (fd < 0)
 		goto failed;
 	if (ioctl(fd, FBIOGET_VSCREENINFO, &vinfo) < 0)
-		goto failed;
+          goto failed;
 	if (ioctl(fd, FBIOGET_FSCREENINFO, &finfo) < 0)
-		goto failed;
+          goto failed;
+        
 	fcntl(fd, F_SETFD, fcntl(fd, F_GETFD) | FD_CLOEXEC);
 	bpp = (vinfo.bits_per_pixel + 7) >> 3;
 	fb = mmap(NULL, fb_len(), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
@@ -107,6 +108,11 @@ failed:
 	perror("fb_init()");
 	close(fd);
 	return 1;
+}
+
+int fb_fd(void)
+{
+  return fd;
 }
 
 void fb_free(void)

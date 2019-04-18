@@ -6,9 +6,15 @@
 #include "draw.h"
 #include "fbpad.h"
 
+#include <stdint.h>
+#include "refresh.h"
+
 static int rows, cols;
 static int fnrows, fncols;
 static struct font *fonts[3];
+
+// BADBAD
+static int min_r = 1000, max_r = -1000, min_c = 1000, max_c = -1000;
 
 int pad_init(void)
 {
@@ -135,6 +141,11 @@ static int fnsel(int fg, int bg)
 
 void pad_put(int ch, int r, int c, int fg, int bg)
 {
+        if (r < min_r) min_r = r;
+        if (r > max_r) max_r = r;
+        if (c < min_c) min_c = c;
+        if (c > max_c) max_c = c;
+
 	int sr = fnrows * r;
 	int sc = fncols * c;
 	fbval_t *bits;
@@ -151,9 +162,31 @@ void pad_put(int ch, int r, int c, int fg, int bg)
 
 void pad_fill(int sr, int er, int sc, int ec, int c)
 {
+
 	int fber = er >= 0 ? er * fnrows : fb_rows();
 	int fbec = ec >= 0 ? ec * fncols : fb_cols();
 	fb_box(sr * fnrows, fber, sc * fncols, fbec, color2fb(c & FN_C));
+
+  if (sr < min_r) min_r = sr;
+  if (er > max_r) max_r = er;
+  if (sc < min_c) min_c = sc;
+  if (ec > max_c) max_c = ec;         
+}
+
+int pad_refresh(void) {
+  printf( "refresh: (%d,%d) to (%d,%d)\n", min_r, min_c, max_r, max_c );
+
+  fbink_refresh( fb_fd(),
+                 min_r * fnrows,
+                 min_c * fncols,
+                 (max_c - min_c + 1) * fncols,
+                 (max_r - min_r + 1) * fnrows,
+                 0 );
+
+  min_r = 1000;
+  max_r = -1000;
+  min_c = 1000;
+  max_c = -1000;
 }
 
 int pad_rows(void)
@@ -179,3 +212,4 @@ int pad_font(char *fr, char *fi, char *fb)
 	fncols = font_cols(fonts[0]);
 	return 0;
 }
+
