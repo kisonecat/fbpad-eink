@@ -191,7 +191,7 @@ void pad_fill(int sr, int er, int sc, int ec, int c)
 }
 
 int pad_refresh(void) {
-  printf( "refresh: (%d,%d) to (%d,%d)\n", min_r, min_c, max_r, max_c );
+  printf( "refresh: (%d,%d)+(%d,%d)\n", invalid_left, invalid_top, invalid_right - invalid_left, invalid_bottom - invalid_top );
 
   fbink_refresh( fb_fd(),
                  invalid_top * fnrows,
