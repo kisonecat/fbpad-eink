@@ -373,7 +373,7 @@ int
 	int ret;
 	if (EXIT_SUCCESS != (ret = refresh(fbfd,
 					   region,
-					   WFM_AUTO, //get_wfm_mode(fbink_cfg->wfm_mode),
+					   get_wfm_mode(WFM_AUTO), //fbink_cfg->wfm_mode),
 					   region_dither,
 					   false,//fbink_cfg->is_nightmode,
 					   false,//fbink_cfg->is_flashing,
