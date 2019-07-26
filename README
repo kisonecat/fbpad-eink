@@ -1,3 +1,23 @@
+fbpad-eink
+==========
+
+This is a fork of Ali Gholami Rudi's https://github.com/aligrudi/fbpad
+
+with the eink code pulled from NiLuJe's impressive
+https://github.com/NiLuJe/FBInk
+
+The resulting derivative work is AGPL licensed (since FBInk is so
+licensed).
+
+As a warning, this is *NOT* using FBInk as a library, so it should be
+seen as a weekend hack for the particular kobo device that I happened
+to have access to.  I'd like to package this up nicely and rely on
+FBInk more broadly to make fbpad work on a variety of devices.
+
+~jim
+
+----------------------------------------------------------------
+
 FBPAD
 =====
 
